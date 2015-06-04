@@ -1,6 +1,6 @@
 var chars = {
 		wall: '#',
-		crate: 'E'
+		entity: 'E'
 	},
 	colors = {
 		'@': '#F00',
@@ -35,7 +35,7 @@ var Game = {
 
 	_generateMap: function() {
 		var options = this.display.getOptions();
-		var digger = new ROT.Map.Digger( options.width, options.height );
+		var digger = new ROT.Map.Digger( options.width, options.height - 5 );
 		var freeCells = [];
 
 		var digCallback = function( x, y, value ) {
@@ -73,11 +73,21 @@ var Game = {
 	},
 
 	_generateBoxes: function( freeCells ) {
-		for ( var i = 0; i < 10; i++ ) {
+		for ( var i = 0; i < 20; i++ ) {
 			var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 			var key = freeCells.splice( index, 1 )[0];
-			this.map[key] = chars.crate;
+			this.map[key] = chars.entity;
 		}
+	},
+
+	isCell: function( x, y, char ) {
+		var key = x + ',' + y;
+		return key in this.map && this.map[key] === char;
+	},
+
+	isFreeCell: function( x, y ) {
+		var key = x + ',' + y;
+		return key in this.map && this.map[key] !== chars.wall;
 	},
 
 	drawCell: function( key ) {
@@ -88,10 +98,22 @@ var Game = {
 		this.display.draw( x, y, char, colors[char] || '#CCC' );
 	},
 
+	drawTextBox: function( text ) {
+		var options = this.display.getOptions();
+
+		for ( var y = options.height - 1; y > options.height - 5; y-- ) {
+			this.display.drawText( 0, y, '%c{#333}' + Array( options.width + 1 ).join( '\\' ) );
+		}
+		this.display.drawText( 0, y, '%c{#FFF}' + Array( options.width + 1 ).join( '~' ) );
+		this.display.drawText( 0, options.height - 4, '%c{#F00}' + ( text || '' ) );
+	},
+
 	_drawWholeMap: function() {
 		for ( var key in this.map ) {
 			this.drawCell( key );
 		}
+
+		this.drawTextBox();
 	}
 };
 
@@ -107,37 +129,46 @@ Player.prototype.act = function() {
 };
 
 Player.prototype.handleEvent = function( e ) {
-	var keyMap = {};
-	keyMap[38] = 0;
-	keyMap[33] = 1;
-	keyMap[39] = 2;
-	keyMap[34] = 3;
-	keyMap[40] = 4;
-	keyMap[35] = 5;
-	keyMap[37] = 6;
-	keyMap[36] = 7;
+	var walkingKeyMap = {
+		// Arrow keys, PgUp/Down, Pos1, End
+		38: 0,
+		33: 1,
+		39: 2,
+		34: 3,
+		40: 4,
+		35: 5,
+		37: 6,
+		36: 7,
+		// HJKL
+		72: 6,
+		74: 4,
+		75: 0,
+		76: 2
+	};
 
 	var code = e.keyCode;
-	/* one of numpad directions? */
-	if ( !( code in keyMap ) ) {
-		return;
-	}
 
-	/* is there a free space? */
-	var dir = ROT.DIRS[8][keyMap[code]];
-	var newX = this._x + dir[0];
-	var newY = this._y + dir[1];
-	var newKey = newX + ',' + newY;
-	if ( !( newKey in Game.map )
-		|| Game.map[newKey] === chars.wall
+	if ( code in walkingKeyMap ) {
+		var dir = ROT.DIRS[8][walkingKeyMap[code]];
+		var newX = this._x + dir[0];
+		var newY = this._y + dir[1];
+		if ( !Game.isFreeCell( newX, newY ) ) {
+			return;
+		}
+
+		Game.drawCell( this._x + ',' + this._y );
+		this._x = newX;
+		this._y = newY;
+		this._draw();
+	} else if ( code === ROT.VK_SPACE
+		&& Game.isCell( this._x, this._y, chars.entity )
 	) {
+		Game.drawTextBox( 'This entity is empty :-(' );
+	} else {
+		document.title = code;
 		return;
 	}
 
-	Game.drawCell( this._x + ',' + this._y );
-	this._x = newX;
-	this._y = newY;
-	this._draw();
 	window.removeEventListener( 'keydown', this );
 	Game.engine.unlock();
 };

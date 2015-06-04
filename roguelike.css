@@ -5,3 +5,11 @@ body {
 	margin: 2em auto;
 	max-width: 1200px;
 }
+
+canvas {
+	background: #000;
+	border: 2px solid #666;
+	border-radius: 24px;
+	margin: 0 -18px;
+	padding: 16px;
+}
