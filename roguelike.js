@@ -1,3 +1,14 @@
+var chars = {
+		wall: '#',
+		crate: 'E'
+	},
+	colors = {
+		'@': '#F00',
+		'.': '#630',
+		'#': '#666',
+		'E': '#FF0'
+	};
+
 var Game = {
 	display: null,
 	map: {},
@@ -5,7 +16,12 @@ var Game = {
 	player: null,
 
 	init: function() {
-		this.display = new ROT.Display();
+		var options = {
+			width: 80,
+			height: 40,
+			forceSquareRatio: true
+		};
+		this.display = new ROT.Display( options );
 		document.body.appendChild( this.display.getContainer() );
 
 		this._generateMap();
@@ -18,7 +34,8 @@ var Game = {
 	},
 
 	_generateMap: function() {
-		var digger = new ROT.Map.Digger();
+		var options = this.display.getOptions();
+		var digger = new ROT.Map.Digger( options.width, options.height );
 		var freeCells = [];
 
 		var digCallback = function( x, y, value ) {
@@ -29,6 +46,15 @@ var Game = {
 			var key = x + ',' + y;
 			this.map[key] = '.';
 			freeCells.push( key );
+
+			// Surround the walkable cells with a wall
+			var dirs = ROT.DIRS[8];
+			for ( var i in dirs ) {
+				key = ( x + dirs[i][0] ) + ',' + ( y + dirs[i][1] );
+				if ( !( this.map[key] ) ) {
+					this.map[key] = chars.wall;
+				}
+			}
 		};
 		digger.create( digCallback.bind( this ) );
 
@@ -40,9 +66,9 @@ var Game = {
 	_createPlayer: function( freeCells ) {
 		var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 		var key = freeCells.splice( index, 1 )[0];
-		var parts = key.split( ',' );
-		var x = parseInt( parts[0] );
-		var y = parseInt( parts[1] );
+		var parts = key.split( ',' ),
+			x = parts[0] | 0,
+			y = parts[1] | 0;
 		this.player = new Player( x, y );
 	},
 
@@ -50,16 +76,21 @@ var Game = {
 		for ( var i = 0; i < 10; i++ ) {
 			var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 			var key = freeCells.splice( index, 1 )[0];
-			this.map[key] = '*';
+			this.map[key] = chars.crate;
 		}
+	},
+
+	drawCell: function( key ) {
+		var parts = key.split( ',' ),
+			x = parts[0] | 0,
+			y = parts[1] | 0,
+			char = this.map[key];
+		this.display.draw( x, y, char, colors[char] || '#CCC' );
 	},
 
 	_drawWholeMap: function() {
 		for ( var key in this.map ) {
-			var parts = key.split( ',' );
-			var x = parseInt( parts[0] );
-			var y = parseInt( parts[1] );
-			this.display.draw( x, y, this.map[key] );
+			this.drawCell( key );
 		}
 	}
 };
@@ -97,11 +128,13 @@ Player.prototype.handleEvent = function( e ) {
 	var newX = this._x + dir[0];
 	var newY = this._y + dir[1];
 	var newKey = newX + ',' + newY;
-	if ( !(newKey in Game.map) ) {
+	if ( !( newKey in Game.map )
+		|| Game.map[newKey] === chars.wall
+	) {
 		return;
 	}
 
-	Game.display.draw( this._x, this._y, Game.map[this._x + ',' + this._y] );
+	Game.drawCell( this._x + ',' + this._y );
 	this._x = newX;
 	this._y = newY;
 	this._draw();
@@ -110,7 +143,7 @@ Player.prototype.handleEvent = function( e ) {
 };
 
 Player.prototype._draw = function() {
-	Game.display.draw( this._x, this._y, '@', '#ff0' );
+	Game.display.draw( this._x, this._y, '@', colors['@'] );
 };
 
 Game.init();
