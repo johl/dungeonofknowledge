@@ -255,9 +255,9 @@ Player.prototype.handleEvent = function( e ) {
 			msg += '\nYou found ' + ( cake === 1 ? 'a cake' : cake + ' cakes' );
 		}
 		Game.drawTextBox( msg );
-		alert(wikidataEntity.image);
+		//alert(wikidataEntity.image);
 		var url = getImageUrl( wikidataEntity.image );
-		alert(url);
+		//alert(url);
 		document.getElementById( 'painting' ).src = url;
 
 		// Empty the entity
