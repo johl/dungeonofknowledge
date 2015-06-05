@@ -48,20 +48,24 @@ var Game = {
 			this.map[key] = '.';
 			freeCells.push( key );
 
-			// Surround the walkable cells with a wall
-			var dirs = ROT.DIRS[8];
-			for ( var i = 0; i < 8; i++ ) {
-				key = ( x + dirs[i][0] ) + ',' + ( y + dirs[i][1] );
-				if ( !( this.map[key] ) ) {
-					this.map[key] = chars.wall;
-				}
-			}
+			this.createWalls( x, y );
 		};
 		digger.create( digCallback.bind( this ) );
 
 		this._generateWikidataEntities( freeCells );
 		this._drawWholeMap();
 		this._createPlayer( freeCells );
+	},
+
+	createWalls: function( x, y ) {
+		// Surround a walkable cell with a square wall
+		var dirs = ROT.DIRS[8];
+		for ( var i = 0; i < 8; i++ ) {
+			var key = ( x + dirs[i][0] ) + ',' + ( y + dirs[i][1] );
+			if ( !( this.map[key] ) ) {
+				this.map[key] = chars.wall;
+			}
+		}
 	},
 
 	_createPlayer: function( freeCells ) {
@@ -78,7 +82,9 @@ var Game = {
 			var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 			var key = freeCells.splice( index, 1 )[0];
 			this.wikidataEntities[key] = {
-				title: 'I\'m a Wikidata entity, sitting at ' + key + '.'
+				title: 'I\'m a Wikidata entity, sitting at ' + key,
+				beer: Math.random() > 0.7 ? 1 : 0,
+				cake: Math.random() > 0.7 ? 1 : 0
 			};
 			this.map[key] = chars.entity;
 		}
@@ -90,6 +96,11 @@ var Game = {
 	},
 
 	isFreeCell: function( x, y ) {
+		var key = x + ',' + y;
+		return !( key in this.map );
+	},
+
+	isWalkableCell: function( x, y ) {
 		var key = x + ',' + y;
 		return key in this.map && this.map[key] !== chars.wall;
 	},
@@ -103,13 +114,16 @@ var Game = {
 	},
 
 	drawTextBox: function( text ) {
-		var options = this.display.getOptions();
+		var options = this.display.getOptions(),
+			player = this.player || {};
 
 		for ( var y = options.height - 1; y > options.height - 5; y-- ) {
 			this.display.drawText( 0, y, '%c{#333}' + Array( options.width + 1 ).join( '\\' ) );
 		}
 		this.display.drawText( 0, y, '%c{#FFF}' + Array( options.width + 1 ).join( '~' ) );
 		this.display.drawText( 0, options.height - 4, '%c{#F00}' + ( text || '' ) );
+		var status = 'Beer: ' + ( player.beer || 0 ) + '  Cake: ' + ( player.cake || 0 );
+		this.display.drawText( options.width - status.length, options.height - 1, '%c{#090}' + status );
 	},
 
 	_drawWholeMap: function() {
@@ -124,6 +138,8 @@ var Game = {
 var Player = function( x, y ) {
 	this._x = x;
 	this._y = y;
+	this.beer = 0;
+	this.cake = 0;
 	this._draw();
 };
 
@@ -155,14 +171,15 @@ Player.prototype.handleEvent = function( e ) {
 		68: 2
 	};
 
-	var key = this._x + ',' + this._y;
-	var code = e.keyCode;
+	var code = e.keyCode,
+		key = this._x + ',' + this._y,
+		options = Game.display.getOptions();
 
 	if ( code in walkingKeyMap ) {
 		var dir = ROT.DIRS[8][walkingKeyMap[code]];
 		var newX = this._x + dir[0];
 		var newY = this._y + dir[1];
-		if ( !Game.isFreeCell( newX, newY ) ) {
+		if ( !Game.isWalkableCell( newX, newY ) ) {
 			return;
 		}
 
@@ -171,18 +188,64 @@ Player.prototype.handleEvent = function( e ) {
 		this._y = newY;
 		this._draw();
 		Game.drawTextBox();
+	} else if ( code === ROT.VK_B
+		&& this.beer
+	) {
+		this.beer--;
+		var size = 3;
+		for ( var deltaX = -size; deltaX <= size; deltaX++ ) {
+			for ( var deltaY = -size; deltaY <= size; deltaY++ ) {
+				// Star shape
+				if ( Math.abs( deltaX ) + Math.abs( deltaY ) > 3 ) {
+					continue;
+				}
+
+				var x = this._x + deltaX,
+					y = this._y + deltaY;
+				if ( x <= 0 || y <= 0 || x >= options.width - 1 || y >= options.height - 6 ) {
+					continue;
+				}
+
+				if ( !Game.isFreeCell( x, y ) && !Game.isCell( x, y, chars.wall ) ) {
+					continue;
+				}
+
+				Game.map[x + ',' + y] = '.';
+				Game.createWalls( x, y );
+				Game._drawWholeMap();
+				this._draw();
+			}
+		}
+		Game.drawTextBox( 'You took a nip, and BOOM!' );
 	} else if ( ( code === ROT.VK_SPACE || code === ROT.VK_E )
-		&& Game.isCell( this._x, this._y, chars.entity )
+		//&& Game.isCell( this._x, this._y, chars.entity )
+		&& Game.wikidataEntities[key]
 	) {
 		var wikidataEntity = Game.wikidataEntities[key] || {},
 			title = wikidataEntity.title;
 
-		Game.drawTextBox( title
-			? 'You looted this entities properties, which are: ' + title
-			: 'This entity is empty :-(' );
-
 		// Loot the entity
+		Game.map[key] = 'e';
+		var beer = wikidataEntity.beer || 0,
+			cake = wikidataEntity.cake || 0;
+		this.beer += beer;
+		this.cake += cake;
+
+		var msg = title
+			? 'You looted this entities properties, which are: ' + title
+			: 'This entity is empty :-(';
+		if ( beer ) {
+			msg += '\nYou found ' + ( beer === 1 ? 'a' : beer ) + ' beer (press B)';
+		}
+		if ( cake ) {
+			msg += '\nYou found ' + ( cake === 1 ? 'a cake' : cake + ' cakes' );
+		}
+		Game.drawTextBox( msg );
+
+		// Empty the entity
 		wikidataEntity.title = '';
+		wikidataEntity.beer = 0;
+		wikidataEntity.cake = 0;
 	} else {
 		// Debug only: show key code in title.
 		document.title = code;
