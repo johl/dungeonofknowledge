@@ -12,17 +12,18 @@ var chars = {
 var Game = {
 	display: null,
 	map: {},
+	wikidataEntities: {},
 	engine: null,
 	player: null,
 
 	init: function() {
 		var options = {
-			width: 80,
-			height: 40,
+			width: 64,
+			height: 36,
 			forceSquareRatio: true
 		};
 		this.display = new ROT.Display( options );
-		document.body.appendChild( this.display.getContainer() );
+		document.getElementById( 'screen' ).appendChild( this.display.getContainer() );
 
 		this._generateMap();
 
@@ -49,7 +50,7 @@ var Game = {
 
 			// Surround the walkable cells with a wall
 			var dirs = ROT.DIRS[8];
-			for ( var i in dirs ) {
+			for ( var i = 0; i < 8; i++ ) {
 				key = ( x + dirs[i][0] ) + ',' + ( y + dirs[i][1] );
 				if ( !( this.map[key] ) ) {
 					this.map[key] = chars.wall;
@@ -58,7 +59,7 @@ var Game = {
 		};
 		digger.create( digCallback.bind( this ) );
 
-		this._generateBoxes( freeCells );
+		this._generateWikidataEntities( freeCells );
 		this._drawWholeMap();
 		this._createPlayer( freeCells );
 	},
@@ -72,10 +73,13 @@ var Game = {
 		this.player = new Player( x, y );
 	},
 
-	_generateBoxes: function( freeCells ) {
+	_generateWikidataEntities: function( freeCells ) {
 		for ( var i = 0; i < 20; i++ ) {
 			var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 			var key = freeCells.splice( index, 1 )[0];
+			this.wikidataEntities[key] = {
+				title: 'I\'m a Wikidata entity, sitting at ' + key + '.'
+			};
 			this.map[key] = chars.entity;
 		}
 	},
@@ -130,7 +134,7 @@ Player.prototype.act = function() {
 
 Player.prototype.handleEvent = function( e ) {
 	var walkingKeyMap = {
-		// Arrow keys, PgUp/Down, Pos1, End
+		// Arrow keys, Pos1/End, PgUp/Down
 		38: 0,
 		33: 1,
 		39: 2,
@@ -143,9 +147,15 @@ Player.prototype.handleEvent = function( e ) {
 		72: 6,
 		74: 4,
 		75: 0,
-		76: 2
+		76: 2,
+		// WASD
+		87: 0,
+		65: 6,
+		83: 4,
+		68: 2
 	};
 
+	var key = this._x + ',' + this._y;
 	var code = e.keyCode;
 
 	if ( code in walkingKeyMap ) {
@@ -156,16 +166,25 @@ Player.prototype.handleEvent = function( e ) {
 			return;
 		}
 
-		Game.drawCell( this._x + ',' + this._y );
+		Game.drawCell( key );
 		this._x = newX;
 		this._y = newY;
 		this._draw();
-    Game.drawTextBox( '' );
-	} else if ( code === ROT.VK_SPACE
+		Game.drawTextBox();
+	} else if ( ( code === ROT.VK_SPACE || code === ROT.VK_E )
 		&& Game.isCell( this._x, this._y, chars.entity )
 	) {
-		Game.drawTextBox( 'This entity is empty :-(' );
+		var wikidataEntity = Game.wikidataEntities[key] || {},
+			title = wikidataEntity.title;
+
+		Game.drawTextBox( title
+			? 'You looted this entities properties, which are: ' + title
+			: 'This entity is empty :-(' );
+
+		// Loot the entity
+		wikidataEntity.title = '';
 	} else {
+		// Debug only: show key code in title.
 		document.title = code;
 		return;
 	}

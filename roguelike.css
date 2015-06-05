@@ -1,15 +1,26 @@
-body {
-	background: #333;
-	color: #FFF;
-	font-family: sans-serif;
-	margin: 2em auto;
-	max-width: 1200px;
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
-canvas {
+body {
+	background: #333 linear-gradient( #444, #000 );
+	color: #EEE;
+	font-family: sans-serif;
+	height: auto;
+	margin: 2em auto;
+	max-width: 960px;
+}
+
+h1 {
+	text-shadow: 0 1px 2px #000;
+}
+
+#screen {
 	background: #000;
-	border: 2px solid #666;
-	border-radius: 24px;
-	margin: 0 -18px;
-	padding: 16px;
+	border: 2px solid #444;
+	border-radius: 32px;
+	margin: 0 -34px;
+	padding: 32px;
 }
