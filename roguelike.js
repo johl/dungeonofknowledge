@@ -160,6 +160,7 @@ Player.prototype.handleEvent = function( e ) {
 		this._x = newX;
 		this._y = newY;
 		this._draw();
+    Game.drawTextBox( '' );
 	} else if ( code === ROT.VK_SPACE
 		&& Game.isCell( this._x, this._y, chars.entity )
 	) {
