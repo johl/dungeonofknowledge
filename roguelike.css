@@ -23,4 +23,15 @@ h1 {
 	border-radius: 32px;
 	margin: 0 -34px;
 	padding: 32px;
+	position: relative;
+}
+
+#painting {
+	background: #000;
+	border: 2px solid #444;
+	margin: 1em;
+	width: 200px;
+	position: absolute;
+	left: -200px;
+	top: 0;
 }

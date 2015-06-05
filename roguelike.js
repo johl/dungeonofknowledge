@@ -78,16 +78,30 @@ var Game = {
 	},
 
 	_generateWikidataEntities: function( freeCells ) {
+		var toFill = [];
+
 		for ( var i = 0; i < 20; i++ ) {
 			var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
 			var key = freeCells.splice( index, 1 )[0];
 			this.wikidataEntities[key] = {
-				title: 'I\'m a Wikidata entity, sitting at ' + key,
+				title: 'Nothing to see here',
 				beer: Math.random() > 0.7 ? 1 : 0,
 				cake: Math.random() > 0.7 ? 1 : 0
 			};
 			this.map[key] = chars.entity;
+			toFill.push( key );
 		}
+
+		var self = this;
+		getArt( function( itemId, item ) {
+			var key = toFill.shift();
+			if ( !key ) {
+				return;
+			}
+
+			self.wikidataEntities[key].title = item.label + ', ' + item.description;
+			self.wikidataEntities[key].image = item.image;
+		} );
 	},
 
 	isCell: function( x, y, char ) {
@@ -232,7 +246,7 @@ Player.prototype.handleEvent = function( e ) {
 		this.cake += cake;
 
 		var msg = title
-			? 'You looted this entities properties, which are: ' + title
+			? 'You looted this entity: ' + title
 			: 'This entity is empty :-(';
 		if ( beer ) {
 			msg += '\nYou found ' + ( beer === 1 ? 'a' : beer ) + ' beer (press B)';
@@ -241,6 +255,10 @@ Player.prototype.handleEvent = function( e ) {
 			msg += '\nYou found ' + ( cake === 1 ? 'a cake' : cake + ' cakes' );
 		}
 		Game.drawTextBox( msg );
+		alert(wikidataEntity.image);
+		var url = getImageUrl( wikidataEntity.image );
+		alert(url);
+		document.getElementById( 'painting' ).src = url;
 
 		// Empty the entity
 		wikidataEntity.title = '';
