@@ -29,8 +29,6 @@ function getArt( callback ) {
 		var response = query_xhr.responseText;
 		var items = $.parseJSON( response ).items;
 		$.each( items, function( itemId, item ) {
-			// Do something with the items
-			//alert( item.label );
 			callback( itemId, item );
 		} );
 	};
@@ -42,7 +40,7 @@ function getArt( callback ) {
 
 
 function getImageUrl( fileName ) {
-	var fileName = fileName.replace( / /g, '_' );
+	var fileName = encodeURI(fileName.replace( / /g, '_' ));
 	var hash = md5( fileName );
 	//https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/XXX.jpg/320px-XXX.jpg
 	return 'https://upload.wikimedia.org/wikipedia/commons/thumb/'
