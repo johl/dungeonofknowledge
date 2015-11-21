@@ -46,7 +46,7 @@ var animals =
   "B": "a banshee",
   "w": "a wolpertinger",
   "j": "a jackalope",
-  "q": "a qilin ( 麒麟)",
+  "q": "a qilin (麒麟)",
   "S": "a Feathered Serpent",
   "i": "an impundulu",
   "T": "a troll",
