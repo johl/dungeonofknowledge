@@ -250,9 +250,11 @@ Player.prototype.handleEvent = function( e ) {
 			: 'This entity is empty :-(';
 		if ( beer ) {
 			msg += '\nYou found ' + ( beer === 1 ? 'a' : beer ) + ' beer (press B)';
+      beer = 0;
 		}
 		if ( cake ) {
 			msg += '\nYou found ' + ( cake === 1 ? 'a cake' : cake + ' cakes' );
+      cake = 0;
 		}
 		Game.drawTextBox( msg );
 		//alert(wikidataEntity.image);
