@@ -55,7 +55,6 @@ var Game = {
         this._generateWikidataEntities( freeCells );
         this._drawWholeMap();
         this._createPlayer( freeCells );
-        this._placeMonsters( freeCells );
     },
 
     createWalls: function( x, y ) {
