@@ -34,27 +34,18 @@ that.”
 Michel Foucault, The Order of Things (New York: Pantheon, 1970) xv.
 */
 var animals = {
-    "e": "an animal that belongs to the emperor",
+    "皇": "an animal that belongs to the emperor",
     "m": "an embaled animal",
     "t": "a trained animal",
     "s": "a suckling pig",
-    "M": "a mermaid",
-    "u": "a unicorn",
-    "p": "a phoenix",
-    "r": "a dragon",
-    "B": "a banshee",
-    "w": "a wolpertinger",
-    "j": "a jackalope",
-    "q": "a qilin (麒麟)",
-    "S": "a Feathered Serpent",
-    "i": "an impundulu",
-    "T": "a troll",
+    "M": "a mermaid (or a siren)",
+    "F": "a fabulous animal",
     "d": "a stray dog",
     "c": "an animal included in this classification",
     "D": "an animal that trembles as if it was mad",
     "I": "an innumerable",
     "C": "an animal drawn with a very fine camel hair brush",
-    "E": "et cetera",
+    "&": "et cetera",
     "v": "an animal that has just broken the flower vase",
     "f": "an animal that, at a distance, resembles a fly"
 }

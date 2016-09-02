@@ -85,36 +85,21 @@ var Game = {
             var key = freeCells.splice( index, 1 )[ 0 ];
             this.wikidataEntities[ key ] = {
                 title: 'Nothing to see here',
-                beer: Math.random() > 0.7 ? 1 : 0,
-                cake: Math.random() > 0.7 ? 1 : 0
+                wand: Math.random() > 0.7 ? 1 : 0
             };
             this.map[ key ] = chars.entity;
             toFill.push( key );
         }
-
-        var self = this;
-        getArt( function( itemId, item ) {
-            var key = toFill.shift();
-            if ( !key ) {
-                return;
-            }
-
-            self.wikidataEntities[ key ].title = item.label + ', ' + item.description;
-            self.wikidataEntities[ key ].image = item.image;
-        } );
-    },
-
-    _placeAnimals: function( freeCells ) {
-        var toFill = [];
-
-        for ( var i = 0; i < 20; i++ ) {
+        // Place animals
+        for ( var i = 0; i < 10; i++ ) {
+            var keys =  Object.keys( animals );
+            var random_animal = keys[ keys.length * Math.random() << 0 ];
             var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
             var key = freeCells.splice( index, 1 )[ 0 ];
             this.wikidataEntities[ key ] = {
-                title: 'Nothing to see here',
+                title: animals.key
             };
-            this.map[ key ] = chars.entity;
-            toFill.push( key );
+            this.map[ key ] = random_animal;
         }
 
         var self = this;
@@ -161,7 +146,7 @@ var Game = {
         }
         this.display.drawText( 0, y, '%c{#FFF}' + Array( options.width + 1 ).join( '~' ) );
         this.display.drawText( 0, options.height - 4, '%c{#F00}' + ( text || '' ) );
-        var status = 'Beer: ' + ( player.beer || 0 ) + '  Cake: ' + ( player.cake || 0 );
+        var status = 'Wand of Ontological Clarity: ' + ( player.wand || 0 );
         this.display.drawText( options.width - status.length, options.height - 1, '%c{#090}' + status );
     },
 
@@ -177,8 +162,7 @@ var Game = {
 var Player = function( x, y ) {
     this._x = x;
     this._y = y;
-    this.beer = 0;
-    this.cake = 0;
+    this.wand = 0;
     this._draw();
 };
 
@@ -227,8 +211,9 @@ Player.prototype.handleEvent = function( e ) {
         this._y = newY;
         this._draw();
         Game.drawTextBox();
-    } else if ( code === ROT.VK_B && this.beer ) {
-        this.beer--;
+    } else if ( code === ROT.VK_Z && this.wand ) {
+        // Zap the wand!
+        this.wand--;
         var size = 3;
         for ( var deltaX = -size; deltaX <= size; deltaX++ ) {
             for ( var deltaY = -size; deltaY <= size; deltaY++ ) {
@@ -243,7 +228,7 @@ Player.prototype.handleEvent = function( e ) {
                     continue;
                 }
 
-                if ( !Game.isFreeCell( x, y ) && !Game.isCell( x, y, chars.wall ) ) {
+                if ( !Game.isFreeCell( x, y ) && !Game.isCell( x, y, chars.wall )) {
                     continue;
                 }
 
@@ -253,7 +238,7 @@ Player.prototype.handleEvent = function( e ) {
                 this._draw();
             }
         }
-        Game.drawTextBox( 'You took a nip, and BOOM!' );
+        Game.drawTextBox( 'You zapped the wand, and BOOM! The wand vanishes after zapping.' );
     } else if ( ( code === ROT.VK_SPACE || code === ROT.VK_E )
         //&& Game.isCell( this._x, this._y, chars.entity )
         && Game.wikidataEntities[ key ]
@@ -262,30 +247,28 @@ Player.prototype.handleEvent = function( e ) {
             title = wikidataEntity.title;
 
         // Loot the entity
-        Game.map[ key ] = 'e';
-        var beer = wikidataEntity.beer || 0,
-            cake = wikidataEntity.cake || 0;
-        this.beer += beer;
-        this.cake += cake;
+        if ( Game.map[ key ] == chars.entity ) {
+          Game.map[ key ] = 'e';
+          var wand = wikidataEntity.wand || 0;
+          this.wand += wand;
 
-        var msg = title ? 'You looted this entity: ' + title : 'This entity is empty :-(';
-        if ( beer ) {
-            msg += '\nYou found ' + ( beer === 1 ? 'a' : beer ) + ' beer (press B)';
-            beer = 0;
-        }
-        if ( cake ) {
-            msg += '\nYou found ' + ( cake === 1 ? 'a cake' : cake + ' cakes' );
-            cake = 0;
-        }
-        Game.drawTextBox( msg );
-        var url = getImageUrl( wikidataEntity.image );
-        document.getElementById( 'painting' ).src = url;
+          var msg = title ? 'You looted this entity: ' + title : 'This entity is empty :-(';
+          if ( wand ) {
+              msg += '\nYou found ' + ( wand === 1 ? 'a' : wand ) + ' wand (press Z to zap)';
+              wand = 0;
+          }
+          Game.drawTextBox( msg );
+          var url = getImageUrl( wikidataEntity.image );
+          document.getElementById( 'painting' ).src = url;
 
-        // Empty the entity
-        wikidataEntity.title = '';
-        wikidataEntity.beer = 0;
-        wikidataEntity.cake = 0;
-    } else {
+          // Empty the entity
+          wikidataEntity.title = '';
+          wikidataEntity.wand = 0;
+        }
+        if ( ( Game.map[ key ] !==  chars.entity ) &&  ( Game.map[ key ] !==  'e'  ) ) {
+          Game.drawTextBox( animals[ Game.map[ key ]] );
+        }
+     } else {
         // Debug only: show key code in title.
         document.title = code;
         return;
