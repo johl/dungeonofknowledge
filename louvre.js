@@ -39,9 +39,22 @@ function getArt( callback ) {
 }
 
 
-function getImageUrl( fileName ) {
-    var fileName = encodeURI( fileName.replace( / /g, '_' ) );
-    var hash = md5( fileName );
-    //https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/XXX.jpg/320px-XXX.jpg
-    return 'https://upload.wikimedia.org/wikipedia/commons/thumb/' + hash.substr( 0, 1 ) + '/' + hash.substr( 0, 2 ) + '/' + fileName + '/320px-' + fileName;
+function changeImage( fileName ) {
+    var fileName = "File:" + fileName;
+    $.ajax({
+        url: "https://commons.wikimedia.org/w/api.php",
+        data: {
+          format: "json",
+          action: "query",
+          titles: fileName,
+          prop:"imageinfo",
+          iiprop: "url",
+          iiurlwidth: 340
+        },
+        dataType: 'jsonp',
+        success: function (data) {
+          var url = data.query.pages[Object.keys(data.query.pages)[0]].imageinfo[0].thumburl;
+          document.getElementById( 'painting' ).src = url;
+        }
+    });
 }

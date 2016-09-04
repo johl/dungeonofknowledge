@@ -258,8 +258,7 @@ Player.prototype.handleEvent = function( e ) {
               wand = 0;
           }
           Game.drawTextBox( msg );
-          var url = getImageUrl( wikidataEntity.image );
-          document.getElementById( 'painting' ).src = url;
+          changeImage( wikidataEntity.image );
 
           // Empty the entity
           wikidataEntity.title = '';
