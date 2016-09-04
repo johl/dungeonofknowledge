@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "jquery": "^3.1.0",
-    "rot.js": "^0.5.0"
+    "rot.js": "^0.5.0",
+    "wikidata-sdk": "^3.2.3"
   }
 }
