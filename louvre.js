@@ -1,21 +1,37 @@
 function getArt( callback ) {
+    var sparql = `
+      PREFIX schema: <http://schema.org/>
+      PREFIX wd: <http://www.wikidata.org/entity/>
+      PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      SELECT ?item ?label ?image ?description
+      WHERE
+      {
+        ?item wdt:P195 wd:Q3044768 .
+        ?item wdt:P18 ?image.
+        ?item rdfs:label ?label .
+        ?item schema:description ?description .
+        filter (lang(?label) = "en") .
+      }
+    `;
+    var url = wdk.sparqlQuery( sparql );
     $.ajax({
-        url: "https://tools.wmflabs.org/hay/wdskim/index.php",
-        data: {
-          format: "json",
-          action: "query",
-          language: "en",
-          prop:"P195",
-          item: "Q3044768",
-          withimages: "on"
-        },
-//        dataType: 'jsonp',
-        success: function (data) {
-            var items = data.items;
-            $.each( items, function( itemId, item ) {
-                callback( itemId, item );
-            } );
-        }
+      url: url,
+      success: function( data ) {
+        var items = _.shuffle( wdk.simplifySparqlResults( data ) );
+        var item = {};
+        $.each( items, function( result ) {
+                if ( items[result].image ){
+                    item.label = items[result].label;
+                    item.description = items[result].description;
+                    item.image = items[result].image;
+                    item.image = item.image.replace( "http://commons.wikimedia.org/wiki/Special:FilePath/", "" );
+                    item.image = decodeURI( item.image );
+                    var itemId = items[result].item;
+                    callback( itemId, item );
+                }
+        } );
+      }
     });
 }
 
@@ -34,8 +50,10 @@ function changeImage( fileName ) {
         },
         dataType: 'jsonp',
         success: function (data) {
-          var url = data.query.pages[Object.keys(data.query.pages)[0]].imageinfo[0].thumburl;
-          document.getElementById( 'painting' ).src = url;
+          if ( data.query.pages[Object.keys(data.query.pages)[0]].imageinfo ) {
+            var url = data.query.pages[Object.keys(data.query.pages)[0]].imageinfo[0].thumburl;
+            document.getElementById( 'painting' ).src = url;
+          }
         }
     });
 }
