@@ -53,6 +53,7 @@ var Game = {
         digger.create( digCallback.bind( this ) );
 
         this._generateWikidataEntities( freeCells );
+        this._placeAnimals( freeCells );
         this._drawWholeMap();
         this._createPlayer( freeCells );
     },
@@ -90,18 +91,6 @@ var Game = {
             this.map[ key ] = chars.entity;
             toFill.push( key );
         }
-        // Place animals
-        for ( var i = 0; i < 10; i++ ) {
-            var keys =  Object.keys( animals );
-            var random_animal = keys[ keys.length * Math.random() << 0 ];
-            var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
-            var key = freeCells.splice( index, 1 )[ 0 ];
-            this.wikidataEntities[ key ] = {
-                title: animals.key
-            };
-            this.map[ key ] = random_animal;
-        }
-
         var self = this;
         getArt( function( itemId, item ) {
             var key = toFill.shift();
@@ -112,6 +101,19 @@ var Game = {
             self.wikidataEntities[ key ].title = item.label + ', ' + item.description;
             self.wikidataEntities[ key ].image = item.image;
         } );
+    },
+
+    _placeAnimals: function( freeCells ) {
+        for ( var i = 0; i < 10; i++ ) {
+            var keys =  Object.keys( animals );
+            var random_animal = keys[ keys.length * Math.random() << 0 ];
+            var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
+            var key = freeCells.splice( index, 1 )[ 0 ];
+            this.wikidataEntities[ key ] = {
+                title: animals.key
+            };
+            this.map[ key ] = random_animal;
+        }
     },
 
     isCell: function( x, y, char ) {
