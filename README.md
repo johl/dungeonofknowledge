@@ -1,18 +1,20 @@
 Greetings, adventurer!
+
 The sum of all human knowledge awaits you. You are about to enter the
 dungeons rumored to contain structures and systems to order the things
 in this world. 
-You, a newly trained seeker of knowledge, are destined to bring order to
-the things lurking in the dungeons of knowledge, or
-die in the attempt. Your hour of destiny has come. For the sake of us all:
-Go bravely!
+
+You, a newly trained initiate and an eager seeker of knowledge, are 
+determined to bring order to the things lurking in the dungeons of 
+knowledge, or die in the attempt. Your hour of destiny has come. 
+For the sake of us all: Go bravely!
 
 How to play
 ===========
 
-This is a [roguelike](https://en.wikipedia.org/wiki/Roguelike), a role-playing video game
+This is a [roguelike](https://en.wikipedia.org/wiki/Roguelike) game, a role-playing video game
 characterized by a dungeon crawl through procedurally generated game
-levels, turn-based gameplay, tile-based graphics, and permanent death of
+levels, turn-based gameplay, tile-based graphics, and possibly permanent death of
 the player-character.
 
 Items in the dungeon, known as entities, are generated from
@@ -26,8 +28,8 @@ encyclopedia](https://en.wikipedia.org/wiki/The_Order_of_Things).
 Running into these animals will raise your level of confusion and
 decrease your sanity, so it seems best to avoid them.
 
-Once you have discovered an entity, you can loot it and see what is
-inside. Press the `return` or `space` key to explore what's inside.
+Once you have discovered an entity box, you can loot it and see what is
+inside. Press the `space` key to explore.
 
 Movement through the dungeon is possible with the cursor keys or like a
 video game player (`WASD`) or even an old school adventurer (`hjkl`).
