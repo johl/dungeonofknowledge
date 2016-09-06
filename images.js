@@ -1,21 +1,7 @@
-function getArt( callback ) {
-    var sparql = `
-      PREFIX schema: <http://schema.org/>
-      PREFIX wd: <http://www.wikidata.org/entity/>
-      PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      SELECT ?item ?label ?image ?description
-      WHERE
-      {
-        ?item wdt:P195 wd:Q3044768 .
-        ?item wdt:P18 ?image.
-        ?item rdfs:label ?label .
-        ?item schema:description ?description .
-        filter (lang(?label) = "en") .
-        filter (lang(?description) = "en") .
-      }
-    `;
+function getArt( level, callback ) {
+    var sparql = level.sparql;
     var url = wdk.sparqlQuery( sparql );
+    $( "#level" ).html("The order of things for this dungeon is: " + level.description );
     $.ajax({
       url: url,
       success: function( data ) {

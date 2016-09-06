@@ -92,7 +92,7 @@ var Game = {
             toFill.push( key );
         }
         var self = this;
-        getArt( function( itemId, item ) {
+        getArt( _.sample( levels ), function( itemId, item ) {
             var key = toFill.shift();
             if ( !key ) {
                 return;
