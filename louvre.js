@@ -12,6 +12,7 @@ function getArt( callback ) {
         ?item rdfs:label ?label .
         ?item schema:description ?description .
         filter (lang(?label) = "en") .
+        filter (lang(?description) = "en") .
       }
     `;
     var url = wdk.sparqlQuery( sparql );
@@ -26,7 +27,7 @@ function getArt( callback ) {
                     item.description = items[result].description;
                     item.image = items[result].image;
                     item.image = item.image.replace( "http://commons.wikimedia.org/wiki/Special:FilePath/", "" );
-                    item.image = decodeURI( item.image );
+                    item.image = decodeURIComponent( item.image );
                     var itemId = items[result].item;
                     callback( itemId, item );
                 }
