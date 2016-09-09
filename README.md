@@ -1,3 +1,5 @@
+<a title="By The British Library [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ADungeon_of_the_keep%2C_Richmond_Castle.jpg"><img align="left" width="150" alt="Dungeon of the keep, Richmond Castle" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Dungeon_of_the_keep%2C_Richmond_Castle.jpg/150px-Dungeon_of_the_keep%2C_Richmond_Castle.jpg"/></a>
+
 Greetings, adventurer!
 
 The sum of all human knowledge awaits you. You are about to enter the
