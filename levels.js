@@ -7,6 +7,7 @@ var levels =
       PREFIX wdt: <http://www.wikidata.org/prop/direct/>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT ?item ?label ?image ?description
+
       WHERE
       {
         ?item wdt:P195 wd:Q3044768 .
@@ -35,7 +36,7 @@ var levels =
         }
           ?item rdfs:label ?label .
           ?item schema:description ?description .
-        filter (lang(?label) = "en") .
+          filter (lang(?label) = "en") .
           filter (lang(?description) = "en") .
 
       }
