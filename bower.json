@@ -2,9 +2,10 @@
   "name": "wikidata-roguelike",
   "homepage": "https://github.com/johl/wikidata-roguelike",
   "authors": [
-    "Jens Ohlig <jens.ohlig@wikimedia.de>"
+    "Jens Ohlig <jens.ohlig@wikimedia.de>",
+    "Thiemo Mättig <thiemo.maettig@wikimedia.de>"
   ],
-  "description": "",
+  "description": "a roguelike game with items generated from Wikidata",
   "main": "",
   "license": "MIT",
   "ignore": [
