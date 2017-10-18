@@ -78,14 +78,6 @@ var Game = {
         this.player = new Player( x, y );
     },
 
-    _createAnimal: function(what, freeCells) {
-      var index = Math.floor(ROT.RNG.getUniform() * freeCells.length); var key = freeCells.splice(index, 1)[0];
-      var parts = key.split(",");
-      var x = parseInt(parts[0]);
-      var y = parseInt(parts[1]);
-      return new Animal( x, y, key, description );
-    },
-
     _generateWikidataEntities: function( freeCells ) {
         var toFill = [];
 
@@ -219,6 +211,16 @@ Player.prototype.handleEvent = function( e ) {
         83: 4,
         68: 2
     };
+
+    // Check if game is won
+    if ( !Object.values( Game.map ).includes ( chars.entity ) ) {
+        Game.engine.lock();
+        alert( 	"You have found every entity in this dungeon.\n" +
+		"An invisible choir sings, and you are bathed in radiance...\n" +
+		"A voice thunders: \"Congratulations, adventurer! You have won the game!\"" 
+	);
+	window.location.reload( true );
+    }
 
     var code = e.keyCode,
         key = this._x + ',' + this._y,
