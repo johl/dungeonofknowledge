@@ -1,26 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Wikidata Roguelike</title>
-<link rel="stylesheet" href="roguelike.css">
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+	<title>Dungeon of Knowledge</title>
+	<style type="text/css">
+	           /* See http://bettermotherfuckingwebsite.com/ */
+	           body{
+	           margin:40px auto;
+	           max-width:650px;
+	           line-height:1.6;
+	           font-size:18px;
+	           color:#444;
+	           padding:0 10px
+	           }
+	           h1,h2,h3 { line-height:1.2 }
+	           img#depiction { 
+	           width:75px; 
+	           height:75px;
+	           padding:5px;
+	           float: left;
+	           }
+		   #start {
+	           text-align: center;
+	           }
+	</style>
 </head>
 <body>
-
-<h1 id="level">Wikidata Roguelike</h1>
-
-<div id="screen">
-<script src="bower_components/wikidata-sdk/dist/wikidata-sdk.min.js"></script>
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/underscore/underscore-min.js"></script>
-<script src="bower_components/rot.js/rot.js"></script>
-<script src="levels.js"></script>
-<script src="images.js"></script>
-<script src="animals.js"></script>
-<script src="roguelike.js"></script>
-<img id="painting" src="//upload.wikimedia.org/wikipedia/commons/thumb/6/66/Wikidata-logo-en.svg/320px-Wikidata-logo-en.svg.png">
+<p><a title="By The British Library [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ADungeon_of_the_keep%2C_Richmond_Castle.jpg"><img align="left" width="150" alt="Dungeon of the keep, Richmond Castle" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Dungeon_of_the_keep%2C_Richmond_Castle.jpg/150px-Dungeon_of_the_keep%2C_Richmond_Castle.jpg"/></a><br>Greetings, adventurer!
+The sum of all human knowledge awaits you. You are about to enter the dungeons rumored to contain structures and systems to order the things in this world. 
+You, a newly trained initiate and an eager seeker of knowledge, are determined to bring order to the things lurking in the dungeons of knowledge, or die in the attempt. Your hour of destiny has come. For the sake of us all: Go bravely!</p>
+<h1 id="how-to-play">How to play</h1>
+<p>This is a <a href="https://en.wikipedia.org/wiki/Roguelike">roguelike</a> game, a role-playing video game characterized by a dungeon crawl through procedurally generated game levels, turn-based gameplay, tile-based graphics, and possibly permanent death of the player-character.</p>
+<p>Items in the dungeon, known as entities, are generated from <a href="https://www.wikidata.org/wiki/Wikidata:Main_Page">Wikidata</a>, a free and open knowledge base that can be read and edited by both humans and machines.</p>
+<p>The dungeon also contains strange animals that seem to have escaped from the pages of <a href="https://en.wikipedia.org/wiki/Celestial_Emporium_of_Benevolent_Knowledge">a certain Chinese encyclopedia</a>. Running into these animals will raise your level of confusion and decrease your sanity, so it seems best to avoid them.</p>
+<p>Once you have discovered an entity box, you can loot it and see what is inside. Press the <code>space</code> key to explore.</p>
+<p>Movement through the dungeon is possible with the cursor keys or like a video game player (<code>WASD</code>) or even an old school adventurer (<code>hjkl</code>).</p>
+<div id="start">
+	<a class="pure-button pure-button-primary" href="roguelike.html">Start the game</a>
 </div>
-
-
+<p>Game by Jens Ohlig <code>&lt;jens.ohlig@wikimedia.de&gt;</code> and Thiemo Mättig <code>&lt;thiemo.maettig@wikimedia.de&gt;</code>. Items generated from <a href="https://wikidata.org/">Wikidata</a>. Made with <a href="https://www.npmjs.com/package/jquery">jQuery</a>, <a href="https://www.npmjs.com/package/rot-js">rot.js</a>, <a href="https://www.npmjs.com/package/underscore">underscore</a>, and <a href="https://www.npmjs.com/package/wikidata-sdk">wikidata-sdk</a>. Get the source at <a href="https://github.com/johl/dungeonofknowledge">GitHub</a>. 
 </body>
 </html>
