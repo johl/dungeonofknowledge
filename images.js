@@ -1,7 +1,7 @@
 function getArt( level, callback ) {
     var sparql = level.sparql;
     var url = wdk.sparqlQuery( sparql );
-    $( "#level" ).html("The order of things for this dungeon is: " + level.description );
+    $( "#level" ).html( "The order of things for this dungeon is: " + level.description );
     $.ajax({
       url: url,
       success: function( data ) {
