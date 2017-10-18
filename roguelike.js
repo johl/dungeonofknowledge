@@ -15,6 +15,7 @@ var Game = {
     wikidataEntities: {},
     engine: null,
     player: null,
+    sanity: 100,
 
     init: function() {
         var options = {
@@ -152,6 +153,7 @@ var Game = {
         }
         this.display.drawText( 0, y, '%c{#FFF}' + Array( options.width + 1 ).join( '~' ) );
         this.display.drawText( 0, options.height - 4, '%c{#F00}' + ( text || '' ) );
+	this.display.drawText( 0, options.height - 1, '%c{#090}' + 'Sanity: ' + Game.sanity + '%');
         var status = 'Wand of Ontological Clarity: ' + ( player.wand || 0 );
         this.display.drawText( options.width - status.length, options.height - 1, '%c{#090}' + status );
     },
@@ -221,7 +223,15 @@ Player.prototype.handleEvent = function( e ) {
 	);
 	window.location.reload( true );
     }
-
+    // Check if the game is lost
+    if ( Game.sanity == 0 ) {
+        Game.engine.lock();
+        alert(  "Madness has taken its toll.\n" +
+		"You hit one strange creature too many...\n" +
+		"You have lost the game. Better luck next time."
+	     );
+        window.location.reload( true );
+    }
     var code = e.keyCode,
         key = this._x + ',' + this._y,
         options = Game.display.getOptions();
@@ -230,15 +240,23 @@ Player.prototype.handleEvent = function( e ) {
         var dir = ROT.DIRS[ 8 ][ walkingKeyMap[ code ] ];
         var newX = this._x + dir[ 0 ];
         var newY = this._y + dir[ 1 ];
-        if ( !Game.isWalkableCell( newX, newY ) ) {
+        var message = '';
+	if ( !Game.isWalkableCell( newX, newY ) ) {
             return;
         }
-
+	if ( Object.keys( animals ).includes( Game.map[ newX + "," + newY ] ) ) {
+		message = 'Your were hit by ' + animals[ Game.map[ newX + "," + newY ] ];
+		var max = 10;
+		var min = 5;
+		var damage = Math.floor(Math.random() * (max  - min + 1)) + min;
+		Game.sanity = Game.sanity - damage;
+		if ( Game.sanity < 0 ) { Game.sanity = 0 }
+	}
         Game.drawCell( key );
         this._x = newX;
         this._y = newY;
         this._draw();
-        Game.drawTextBox();
+        Game.drawTextBox( message );
     } else if ( code === ROT.VK_Z && this.wand ) {
         // Zap the wand!
         this.wand--;
@@ -294,7 +312,7 @@ Player.prototype.handleEvent = function( e ) {
         }
      } else {
         // Debug only: show key code in title.
-        document.title = code;
+        //document.title = code;
         return;
     }
 
