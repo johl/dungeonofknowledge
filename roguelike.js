@@ -78,6 +78,14 @@ var Game = {
         this.player = new Player( x, y );
     },
 
+    _createAnimal: function(what, freeCells) {
+      var index = Math.floor(ROT.RNG.getUniform() * freeCells.length); var key = freeCells.splice(index, 1)[0];
+      var parts = key.split(",");
+      var x = parseInt(parts[0]);
+      var y = parseInt(parts[1]);
+      return new Animal( x, y, key, description );
+    },
+
     _generateWikidataEntities: function( freeCells ) {
         var toFill = [];
 
@@ -113,12 +121,16 @@ var Game = {
                 title: animals.key
             };
             this.map[ key ] = random_animal;
-        }
+	}
     },
 
-    isCell: function( x, y, char ) {
+    isZappableCell: function( x, y ) {
         var key = x + ',' + y;
-        return key in this.map && this.map[ key ] === char;
+        if ( ( this.map[ key ] === chars.wall ) || ( Object.keys( animals ).includes( this.map[ key ] ) ) ) {
+		return true 
+	} else {
+		return false
+	}
     },
 
     isFreeCell: function( x, y ) {
@@ -159,6 +171,18 @@ var Game = {
 
         this.drawTextBox();
     }
+};
+
+var Animal = function( x, y, symbol, description ) {
+  this._x = x;
+  this._y = y;
+  this._symbol = symbol;
+  this._description = description;
+  this._draw();
+};
+
+Animal.prototype._draw = function() {
+  Game.display.draw(this._x, this._y, "P", "red");
 };
 
 var Player = function( x, y ) {
@@ -230,7 +254,7 @@ Player.prototype.handleEvent = function( e ) {
                     continue;
                 }
 
-                if ( !Game.isFreeCell( x, y ) && !Game.isCell( x, y, chars.wall )) {
+                if ( !Game.isFreeCell( x, y ) && !Game.isZappableCell( x, y ) )  {
                     continue;
                 }
 
@@ -241,10 +265,7 @@ Player.prototype.handleEvent = function( e ) {
             }
         }
         Game.drawTextBox( 'You zapped the wand, and BOOM! The wand vanishes after zapping.' );
-    } else if ( ( code === ROT.VK_SPACE || code === ROT.VK_E )
-        //&& Game.isCell( this._x, this._y, chars.entity )
-        && Game.wikidataEntities[ key ]
-    ) {
+    } else if ( ( code === ROT.VK_SPACE || code === ROT.VK_E ) && Game.wikidataEntities[ key ]) {
         var wikidataEntity = Game.wikidataEntities[ key ] || {},
             title = wikidataEntity.title;
 

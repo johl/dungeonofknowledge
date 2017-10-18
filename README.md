@@ -24,8 +24,7 @@ open knowledge base that can be read and edited by both humans and
 machines.
 
 The dungeon also contains strange animals that seem to have escaped from
-the pages of [a certain Chinese
-encyclopedia](https://en.wikipedia.org/wiki/The_Order_of_Things).
+the pages of [a certain Chinese encyclopedia](https://en.wikipedia.org/wiki/Celestial_Emporium_of_Benevolent_Knowledge).
 Running into these animals will raise your level of confusion and
 decrease your sanity, so it seems best to avoid them.
 
