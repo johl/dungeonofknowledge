@@ -117,6 +117,13 @@ var Game = {
 	}
     },
 
+    _animalPositions: function() {
+		return _.pick( this.map,
+			function( value, key, object ) {
+				return _.contains( Object.keys( animals ), value )
+		} )
+    },
+
     isZappableCell: function( x, y ) {
         var key = x + ',' + y;
         if ( ( this.map[ key ] === chars.wall ) || ( Object.keys( animals ).includes( this.map[ key ] ) ) ) {
