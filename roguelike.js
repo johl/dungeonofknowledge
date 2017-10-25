@@ -238,7 +238,9 @@ Animal.prototype.act = function() {
   Game.map[this._x + ',' + this._y] = animalChar;
   Game.drawCell( this._x + ',' + this._y );
   Game.player._draw();
-  Game.damagePlayerWhenTouchingAnimal( Game.player._x, Game.player._y );
+  if ( this._x === Game.player._x && this._y === Game.player._y ) {
+    Game.damagePlayerWhenTouchingAnimal( Game.player._x, Game.player._y );
+  }
 };
 
 Animal.prototype._draw = function() {
