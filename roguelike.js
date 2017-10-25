@@ -130,6 +130,21 @@ var Game = {
 		} )
     },
 
+    damagePlayerWhenTouchingAnimal: function( playerX, playerY ) {
+	var animalChar = Game.map[ playerX + ',' + playerY ];
+
+	if ( Object.keys( animals ).includes( animalChar ) ) {
+	    var max = 80,
+		min = 30,
+		damage = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+	    this.sanity = Math.max( this.sanity - damage, 0 );
+	    Game.drawTextBox( 'Your were hit by ' + animals[ animalChar ] );
+	    return damage;
+	}
+
+	return 0;
+    },
+
     isZappableCell: function( x, y ) {
         var key = x + ',' + y;
         if ( ( this.map[ key ] === chars.wall ) || ( Object.keys( animals ).includes( this.map[ key ] ) ) ) {
@@ -222,6 +237,8 @@ Animal.prototype.act = function() {
   this._y = toY;
   Game.map[this._x + ',' + this._y] = animalChar;
   Game.drawCell( this._x + ',' + this._y );
+  Game.player._draw();
+  Game.damagePlayerWhenTouchingAnimal( Game.player._x, Game.player._y );
 };
 
 Animal.prototype._draw = function() {
@@ -289,23 +306,17 @@ Player.prototype.handleEvent = function( e ) {
         var dir = ROT.DIRS[ 8 ][ walkingKeyMap[ code ] ];
         var newX = this._x + dir[ 0 ];
         var newY = this._y + dir[ 1 ];
-        var message = '';
 	if ( !Game.isWalkableCell( newX, newY ) ) {
             return;
         }
-	if ( Object.keys( animals ).includes( Game.map[ newX + "," + newY ] ) ) {
-		message = 'Your were hit by ' + animals[ Game.map[ newX + "," + newY ] ];
-		var max = 80;
-		var min = 30;
-		var damage = Math.floor(Math.random() * (max  - min + 1)) + min;
-		Game.sanity = Game.sanity - damage;
-		if ( Game.sanity < 0 ) { Game.sanity = 0 }
-	}
+	var damage = Game.damagePlayerWhenTouchingAnimal( newX, newY );
         Game.drawCell( key );
         this._x = newX;
         this._y = newY;
         this._draw();
-        Game.drawTextBox( message );
+	if ( !damage ) {
+	    Game.drawTextBox( '' );
+	}
     } else if ( code === ROT.VK_Z && this.wand ) {
         // Zap the wand!
         this.wand--;
