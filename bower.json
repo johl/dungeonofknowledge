@@ -7,7 +7,7 @@
   ],
   "description": "A roguelike game with items generated from Wikidata",
   "main": "",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "ignore": [
     "**/.*",
     "node_modules",
