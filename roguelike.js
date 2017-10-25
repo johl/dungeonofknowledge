@@ -15,6 +15,7 @@ var Game = {
     wikidataEntities: {},
     engine: null,
     player: null,
+    animalInstances: [],
     sanity: 100,
 
     init: function() {
@@ -30,6 +31,9 @@ var Game = {
 
         var scheduler = new ROT.Scheduler.Simple();
         scheduler.add( this.player, true );
+        this.animalInstances.forEach( function( animal ) {
+            scheduler.add( animal, true );
+        } );
 
         this.engine = new ROT.Engine( scheduler );
         this.engine.start();
@@ -110,10 +114,12 @@ var Game = {
             var random_animal = keys[ keys.length * Math.random() << 0 ];
             var index = Math.floor( ROT.RNG.getUniform() * freeCells.length );
             var key = freeCells.splice( index, 1 )[ 0 ];
-            this.wikidataEntities[ key ] = {
-                title: animals.key
-            };
+            // this.wikidataEntities[ key ] = {
+            //     title: animals[key]
+            // };
             this.map[ key ] = random_animal;
+	    var parts = key.split( ',' );
+	    this.animalInstances.push( new Animal( parts[0] | 0, parts[1] | 0, random_animal, animals[random_animal] ) );
 	}
     },
 
@@ -179,11 +185,47 @@ var Animal = function( x, y, symbol, description ) {
   this._y = y;
   this._symbol = symbol;
   this._description = description;
-  this._draw();
+  this._direction = ( Math.random() * 4 ) | 0;
+  this._step = ( Math.random() * 6 ) | 0;
+  // this._draw();
+};
+
+Animal.prototype.act = function() {
+  this._step--;
+  if ( this._step <= 0 ) {
+    this._step += 6;
+    this._direction = ( Math.random() * 4 ) | 0;
+    return;
+  } else if ( this._step < 3 ) {
+    return;
+  }
+
+  var toX = this._x + ( this._direction === 1 ? 1 : ( this._direction === 3 ? -1 : 0 ) );
+  var toY = this._y + ( this._direction === 2 ? 1 : ( this._direction === 0 ? -1 : 0 ) );
+  if ( Game.map[toX + ',' + toY] !== '.' ) {
+    this._step = 0;
+    return;
+  }
+
+  var key = this._x + ',' + this._y;
+  var animalChar = Game.map[key];
+  Game.map[key] = '.';
+
+  for ( var x = -1; x <= 1; x++ ) {
+    Game.drawCell( ( this._x + x ) + ',' + this._y );
+  }
+  for ( y = -1; y <= 1; y++ ) {
+    Game.drawCell( this._x + ',' + ( this._y + y ) );
+  }
+
+  this._x = toX;
+  this._y = toY;
+  Game.map[this._x + ',' + this._y] = animalChar;
+  Game.drawCell( this._x + ',' + this._y );
 };
 
 Animal.prototype._draw = function() {
-  Game.display.draw(this._x, this._y, "P", "red");
+  // Game.display.draw( this._x, this._y, this._symbol, '#CCC' );
 };
 
 var Player = function( x, y ) {
