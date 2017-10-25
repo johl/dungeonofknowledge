@@ -295,8 +295,8 @@ Player.prototype.handleEvent = function( e ) {
         }
 	if ( Object.keys( animals ).includes( Game.map[ newX + "," + newY ] ) ) {
 		message = 'Your were hit by ' + animals[ Game.map[ newX + "," + newY ] ];
-		var max = 10;
-		var min = 5;
+		var max = 80;
+		var min = 30;
 		var damage = Math.floor(Math.random() * (max  - min + 1)) + min;
 		Game.sanity = Game.sanity - damage;
 		if ( Game.sanity < 0 ) { Game.sanity = 0 }
