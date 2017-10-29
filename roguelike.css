@@ -9,7 +9,7 @@ body {
 	color: #EEE;
 	height: auto;
 	margin: 2em auto;
-	max-width: 960px;
+	max-width: 720px;
 }
 
 h1 {
@@ -23,6 +23,11 @@ h1 {
 	margin: 0 -34px;
 	padding: 32px;
 	position: relative;
+}
+
+#screen canvas {
+	display: block;
+	margin: auto;
 }
 
 #painting {
