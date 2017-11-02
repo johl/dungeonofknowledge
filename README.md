@@ -34,4 +34,4 @@ inside. Press the `space` key to explore.
 Movement through the dungeon is possible with the cursor keys or like a
 video game player (`WASD`) or even an old school adventurer (`hjkl`).
 
- 
+A copy of the game can be played online at <a href="http://www.johl.io/dungeonofknowledge/">http://www.johl.io/dungeonofknowledge/</a>.
