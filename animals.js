@@ -48,4 +48,4 @@ var animals = {
     "&": "et cetera",
     "v": "an animal that has just broken the flower vase",
     "f": "an animal that, at a distance, resembles a fly"
-}
+};

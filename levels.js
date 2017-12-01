@@ -63,4 +63,4 @@ var levels =
       `,
     description: "Space probes"
   }
-]
+];
