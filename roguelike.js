@@ -152,7 +152,7 @@ var Game = {
 				min = 30,
 				damage = Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 			this.sanity = Math.max( this.sanity - damage, 0 );
-			Game.drawTextBox( 'Your were hit by ' + animals[ animalChar ] );
+			this.drawTextBox( 'Your were hit by ' + animals[ animalChar ] );
 			return damage;
 		}
 
@@ -174,17 +174,25 @@ var Game = {
 	 * @returns {boolean}
 	 */
 	isZappableCell: function( x, y ) {
-		var key = x + ',' + y;
-		if ( ( this.map[ key ] === chars.wall ) || ( Object.keys( animals ).includes( this.map[ key ] ) ) ) {
-			return true
-		} else {
-			return false
+		var options = this.display.getOptions(),
+			key = x + ',' + y;
+		if ( x < 1 || y < 1 || x > options.width - 2 || y > options.height - 7 ) {
+			return false;
 		}
+		return !key in this.map
+			|| this.map[ key ] === chars.wall;
 	},
 
-	isFreeCell: function( x, y ) {
-		var key = x + ',' + y;
-		return !( key in this.map );
+	zapAnimal: function( x, y ) {
+		for ( var i in this.animalInstances ) {
+			if ( this.animalInstances.hasOwnProperty( i )
+				&& this.animalInstances[ i ]._x === x
+				&& this.animalInstances[ i ]._y === y
+			) {
+				this.engine._scheduler.remove( this.animalInstances[ i ] );
+				delete this.animalInstances[ i ];
+			}
+		}
 	},
 
 	isWalkableCell: function( x, y ) {
@@ -210,7 +218,7 @@ var Game = {
 		}
 		this.display.drawText( 0, y, '%c{#FFF}' + Array( options.width + 1 ).join( '~' ) );
 		this.display.drawText( 0, options.height - 4, '%c{#F00}' + ( text || '' ) );
-		this.display.drawText( 0, options.height - 1, '%c{#090}' + 'Sanity: ' + Game.sanity + '%');
+		this.display.drawText( 0, options.height - 1, '%c{#090}' + 'Sanity: ' + this.sanity + '%');
 		var status = 'Wand of Ontological Clarity: ' + ( player.wand || 0 );
 		this.display.drawText( options.width - status.length, options.height - 1, '%c{#090}' + status );
 	},
@@ -336,8 +344,7 @@ Player.prototype.handleEvent = function( e ) {
 	}
 
 	var code = e.keyCode,
-		key = this._x + ',' + this._y,
-		options = Game.display.getOptions();
+		key = this._x + ',' + this._y;
 
 	Game.drawTextBox();
 
@@ -359,22 +366,18 @@ Player.prototype.handleEvent = function( e ) {
 		for ( var deltaX = -size; deltaX <= size; deltaX++ ) {
 			for ( var deltaY = -size; deltaY <= size; deltaY++ ) {
 				// Star shape
-				if ( Math.abs( deltaX ) + Math.abs( deltaY ) > 3 ) {
+				if ( Math.abs( deltaX ) + Math.abs( deltaY ) > size ) {
 					continue;
 				}
 
 				var x = this._x + deltaX,
 					y = this._y + deltaY;
-				if ( x <= 0 || y <= 0 || x >= options.width - 1 || y >= options.height - 6 ) {
-					continue;
-				}
 
-				if ( !Game.isFreeCell( x, y ) && !Game.isZappableCell( x, y ) ) {
-					continue;
+				Game.zapAnimal( x, y );
+				if ( Game.isZappableCell( x, y ) ) {
+					Game.map[ x + ',' + y ] = '.';
+					Game.createWalls( x, y );
 				}
-
-				Game.map[ x + ',' + y ] = '.';
-				Game.createWalls( x, y );
 			}
 		}
 		Game._drawWholeMap();
