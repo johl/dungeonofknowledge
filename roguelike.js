@@ -255,7 +255,7 @@ var Animal = function( x, y, symbol, description ) {
 };
 
 Animal.prototype.act = function() {
-	this._step--;
+	/* this._step--;
 	if ( this._step <= 0 ) {
 		this._step += 6;
 		this._direction = ( Math.random() * 4 ) | 0;
@@ -275,6 +275,27 @@ Animal.prototype.act = function() {
 	this._y = toY;
 	// this._draw();
 	// Game.player._draw();
+	*/
+        var x = Game.player._x;
+	var y = Game.player._y;
+    	var passableCallback = function(x, y) {
+		return (x+","+y in Game.map);
+	}
+	var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
+	
+	var path = [];
+	var pathCallback = function(x, y) {
+		path.push([x, y]);
+	}
+	astar.compute(this._x, this._y, pathCallback);
+	path.shift();
+	x = path[0][0];
+	y = path[0][1];
+	Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+	this._x = x;
+	this._y = y;
+	this._draw();
+	Game.player._draw();
 	if ( this._x === Game.player._x && this._y === Game.player._y ) {
 		Game.damagePlayerWhenTouchingAnimal( Game.player._x, Game.player._y );
 	}
