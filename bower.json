@@ -19,6 +19,6 @@
     "jquery": "^3.1.0",
     "rot.js": "^0.5.0",
     "underscore": "^1.8.3",
-    "wikidata-sdk": "git://github.com/maxlath/wikidata-sdk.git#^3.2.4"
+    "wikidata-sdk": "git://github.com/maxlath/wikidata-sdk.git#^5.1.4"
   }
 }
