@@ -106,7 +106,7 @@ var Game = {
 
 			this.wikidataEntities[ key ] = {
 				title: 'Nothing to see here',
-				wand: Math.random() > 0.7 ? 1 : 0
+				wand: Math.random() > 0.7 ? 2 : 1
 			};
 			this.map[ key ] = chars.entity;
 			toFill.push( key );
@@ -279,19 +279,21 @@ Animal.prototype.act = function() {
         var x = Game.player._x;
 	var y = Game.player._y;
     	var passableCallback = function(x, y) {
-		return (x+","+y in Game.map);
+		return ( x+","+y in Game.map );
 	}
-	var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
+	var astar = new ROT.Path.AStar( x, y, passableCallback, { topology:4 } );
 	
 	var path = [];
-	var pathCallback = function(x, y) {
-		path.push([x, y]);
+	var pathCallback = function( x, y ) {
+		path.push( [ x, y ] );
 	}
-	astar.compute(this._x, this._y, pathCallback);
+	astar.compute( this._x, this._y, pathCallback );
 	path.shift();
-	x = path[0][0];
-	y = path[0][1];
-	Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+	if ( typeof path[0] !== 'undefined' && path[0].length > 0 ) {
+		x = path[0][0];
+		y = path[0][1];
+	}
+	Game.display.draw( this._x, this._y, Game.map[ this._x+","+this._y ] );
 	this._x = x;
 	this._y = y;
 	this._draw();
@@ -415,7 +417,7 @@ Player.prototype.handleEvent = function( e ) {
 
 			var msg = title ? 'You looted this entity: ' + title : 'This entity is empty :-(';
 			if ( wand ) {
-				msg += '\nYou found ' + ( wand === 1 ? 'a' : wand ) + ' wand (press Z to zap)';
+				msg += '\nYou found ' + ( wand === 1 ? 'a wand' : wand + ' wands' ) + ' (press Z to zap)';
 				wand = 0;
 			}
 			Game.drawTextBox( msg );
