@@ -62,5 +62,19 @@ var levels =
       }
       `,
     description: "Space probes"
-  }
-];
+  },
+  {
+    sparql: `
+      SELECT ?item ?label ?description ?image
+      WHERE
+      {
+	wd:Q55075439 wdt:P180 ?item.
+        ?item rdfs:label ?label .
+        ?item schema:description ?description .
+        filter (lang(?label) = "en") .
+        filter (lang(?description) = "en") .
+        OPTIONAL { ?item wdt:P18 ?image }
+      }
+      `,
+    description: "Art depicted in the videoclip 'Apeshit' by The Carters (Beyoncé and Jay-Z)"
+  }];
