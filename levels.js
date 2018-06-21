@@ -77,4 +77,19 @@ var levels =
       }
       `,
     description: "Art depicted in the videoclip 'Apeshit' by The Carters (Beyoncé and Jay-Z)"
-  }];
+  },
+  {
+    sparql: `
+       SELECT ?item ?label ?description ?image
+       WHERE 
+       {
+        ?item wdt:P136 wd:Q40446;
+        wdt:P180/wdt:P31? wd:Q146.
+        filter (lang(?label) = "en") .
+        filter (lang(?description) = "en") .
+        OPTIONAL { ?item wdt:P18 ?image. }
+       }
+       `,
+    description: "Nudes with cats"
+  }
+];
