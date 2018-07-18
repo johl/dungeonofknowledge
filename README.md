@@ -3,7 +3,7 @@ Greetings, adventurer!
 
 The sum of all human knowledge awaits you. You are about to enter the
 dungeons rumored to contain structures and systems to order the things
-in this world. 
+in this world.
 
 You, a newly trained initiate and an eager seeker of knowledge, are 
 determined to bring order to the things lurking in the dungeons of 
